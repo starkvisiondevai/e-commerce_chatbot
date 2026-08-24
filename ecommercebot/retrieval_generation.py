@@ -1,14 +1,14 @@
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
-from langchain_groq import ChatGroq
 from ecommercebot.data_ingest import ingestData
+from langchain_google_genai import ChatGoogleGenerativeAI
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
 
 def generation(vectorStore):
@@ -31,7 +31,12 @@ def generation(vectorStore):
 
     prompt = ChatPromptTemplate.from_template(PRODUCT_BOT_TEMPLATE)
 
-    llm = ChatGroq(api_key=GROQ_API_KEY)
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-3.6-flash",
+        api_key=GEMINI_API_KEY,
+        temprature=0.2,
+        max_output_tokens=512
+    )
 
     chain = (
         {"context" : retriever, "question" : RunnablePassthrough()}
