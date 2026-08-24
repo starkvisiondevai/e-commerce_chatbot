@@ -2,10 +2,11 @@ import os
 from dotenv import load_dotenv
 from langchain_astradb import AstraDBVectorStore
 from ecommercebot.data_converter import dataConverter
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+
 
 load_dotenv()
-HUGGINGFACE_API_KEY = os.getenv('HUGGINGFACE_API_KEY')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 ## AstraDB
 ASTRADB_API_ENDPOINT = os.getenv('ASTRADB_API_ENDPOINT')
 ASTRADB_APPLICATION_TOKEN = os.getenv('ASTRADB_APPLICATION_TOKEN')
@@ -14,7 +15,10 @@ ASTRADB_NAMESPACE = os.getenv('ASTRADB_NAMESPACE')
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-embeddings = HuggingFaceEmbeddings()
+embeddings = GoogleGenerativeAIEmbeddings(
+    model="models/gemini-embedding-001",
+    google_api_key=GEMINI_API_KEY,
+)
 
 def ingestData(status):
     vectorStore = AstraDBVectorStore(
@@ -43,4 +47,5 @@ if __name__ == "__main__":
 
     results = vectorStore.similarity_search("can you tell me the low budget sound basshead.")
     for res in results:
-        print(f"* {res.page_content} [{res.metadata}]")
+        print(f"* {res.page_content} [{res.metadata}]") 
+
